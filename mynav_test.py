@@ -10,11 +10,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import pyautogui as pag
 
-# chrome画面を表示せずに操作するヘッドレスモードのため下記2行が必要
-options = Options()
-options.add_argument('--headless')
-
-driver = webdriver.Chrome(options=options)
+driver = webdriver.Chrome()
 driver.implicitly_wait(10)
 driver.get('https://tenshoku.mynavi.jp/')
 
