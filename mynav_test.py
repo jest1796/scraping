@@ -15,14 +15,29 @@ driver.implicitly_wait(10)
 driver.get('https://tenshoku.mynavi.jp/')
 
 def scrape():
-    sleep(3)
+
+    sleep(2)
     pag.click(200,200)
-    # test = driver.find_element(By.XPATH,'//h1')
-    co_name = driver.find_element(By.XPATH,'//h3')
-    co_link = driver.find_element(By.XPATH,'//a[@class="js__ga--setCookieOccName"]').get_attribute('href')
-    # print(test.text)
-    print(co_name.text)
-    print(co_link)
+    sleep(2)
+    pag.click(200,200)
+
+
+    co_names = driver.find_elements(By.XPATH,'//h3')
+    # co_link = driver.find_elements(By.XPATH,'//a[@class="js__ga--setCookieOccName"]').get_attribute('href')
+    co_links = driver.find_elements(By.XPATH,'//a[@class="js__ga--setCookieOccName"]')
+
+    names =[]
+    for co_name in co_names:
+        names.append(co_name.text)
+        print(co_name.text + "\n")
+    
+    urls =[]
+    for co_link in co_links:
+        urls.append(co_link.get_attribute)
+        print(co_link.get_attribute('href') + "\n")
+
+    print("取得会社数    "  + str(len(names)))
+    print("取得リンク数  " + str(len(urls)))
 
     return()
 
