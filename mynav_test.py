@@ -4,6 +4,7 @@
 
 # googlechromeのバージョンに対応したwebdriverをダウンロードの上、当ファイルと同じディレクトリに置くこと
 
+from contextlib import nullcontext
 from selenium import webdriver
 from time import sleep
 from selenium.webdriver.chrome.options import Options
@@ -14,8 +15,11 @@ driver = webdriver.Chrome()
 driver.implicitly_wait(10)
 driver.get('https://tenshoku.mynavi.jp/')
 
-def scrape():
 
+def scrape(names,urls):
+
+    # 検索後のページでもアンケート用小ウインドウが１つまたは２つ開く場合があるので
+    # ２秒待機後にクリックを２回行ってそれらを消す
     sleep(2)
     pag.click(200,200)
     sleep(2)
@@ -23,23 +27,66 @@ def scrape():
 
 
     co_names = driver.find_elements(By.XPATH,'//h3')
-    # co_link = driver.find_elements(By.XPATH,'//a[@class="js__ga--setCookieOccName"]').get_attribute('href')
     co_links = driver.find_elements(By.XPATH,'//a[@class="js__ga--setCookieOccName"]')
 
-    names =[]
+    page_names = []
     for co_name in co_names:
-        names.append(co_name.text)
-        print(co_name.text + "\n")
+        page_names.append(co_name.text)
+        # print(co_name.text + "\n")
+    names +=  page_names    
     
-    urls =[]
+    page_urls = []
     for co_link in co_links:
-        urls.append(co_link.get_attribute)
-        print(co_link.get_attribute('href') + "\n")
+        page_urls.append(co_link.get_attribute)
+        # print(co_link.get_attribute('href') + "\n")
+    urls = urls + page_urls
+    sleep(3)
+
+
+    # 次ページへのリンクを取得　取得できない場合は最後のページなのでexcept以降の処理へ
+    try:
+        next_link = driver.find_element(By.XPATH,'(//li/a[@class ="iconFont--arrowLeft"])[2]')
+        driver.execute_script('arguments[0].click();', next_link)
+        print('次のページをスクレイピング開始')
+        
+        sleep(2)
+        scrape(names,urls)
+    except:
+        #namesとurlsのタイプを確認
+       print(type(names))
+       print(type(urls))
+
+       print(names)
+        # 会社名をリスト型で表示
+       print(urls)
+        # リンクをリスト型で表示
+        
+    return(names,urls)
+
+# namesとurlsという空のリストを作成し、scrape関数に渡し、返り値を受け取る
+def main():
+    names =[]
+        # 会社名のリスト
+    urls =[]
+        # 詳細へのリンクのリスト
+
+    scrape(names,urls)
+        # ２つの空リストをscrape関数に渡す
+
+    print(type(names))    #namesとurlsのタイプを確認
+    print(type(urls))    
+    
+    print(names)
+        # 会社名をリスト型で表示
+    print(urls)
+        # リンクをリスト型で表示
+
 
     print("取得会社数    "  + str(len(names)))
-    print("取得リンク数  " + str(len(urls)))
-
+    print("取得リンク数  " + str(len(urls)))    
+            # 最終的に取得できた会社数とリンク数を表示
     return()
+
 
 search_bar = driver.find_element(By.XPATH,'//input[@class="topSearch__text"]')
 search_bar.send_keys("大阪市　ITエンジニア　未経験")
@@ -58,17 +105,7 @@ sleep(2)
 
 number_recrute = driver.find_element(By.XPATH,('//p[@class="result__num"]/em')).text
 print("\n" + "検索数は"+ number_recrute +"です。")
-# print("\n" + "スクレイピングを実行しますか？　（Y / N)")
-# Y_N = input()
-# if Y_N=="y":
-#     print("スクレイピング実行\n"+"UNDER CONSTRUCTION")
-    # scrape()
-# else:
-#     print("中止します。")
-
-scrape()
-
-
+main()
 
 sleep(5)
 driver.quit()
@@ -84,3 +121,12 @@ driver.quit()
 # //a[@class="js__ga--setCookieOccName"] 詳細へのリンクこちらかも？
 
 # //a[@class="iconFont--arrowLeft"] 次のページへのリンク
+# //li[@class="pager__next"]/a
+
+# print("\n" + "スクレイピングを実行しますか？　（Y / N)")
+# Y_N = input()
+# if Y_N=="y":
+#     print("スクレイピング実行\n"+"UNDER CONSTRUCTION")
+#     main()
+# else:
+#     print("中止します。")
