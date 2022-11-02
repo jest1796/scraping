@@ -16,7 +16,8 @@ driver.implicitly_wait(10)
 driver.get('https://tenshoku.mynavi.jp/')
 
 
-def scrape(names,urls):
+def scrape(urls,names):
+# def scrape(names,urls):
 
     # 検索後のページでもアンケート用小ウインドウが１つまたは２つ開く場合があるので
     # ２秒待機後にクリックを２回行ってそれらを消す
@@ -33,13 +34,13 @@ def scrape(names,urls):
     for co_name in co_names:
         page_names.append(co_name.text)
         # print(co_name.text + "\n")
-    names +=  page_names    
+    names += page_names    
     
     page_urls = []
     for co_link in co_links:
         page_urls.append(co_link.get_attribute)
         # print(co_link.get_attribute('href') + "\n")
-    urls = urls + page_urls
+    urls += page_urls
     sleep(3)
 
 
@@ -50,7 +51,8 @@ def scrape(names,urls):
         print('次のページをスクレイピング開始')
         
         sleep(2)
-        scrape(names,urls)
+        # scrape(names,urls)
+        scrape(urls,names)
     except:
         #namesとurlsのタイプを確認
        print(type(names))
@@ -60,8 +62,10 @@ def scrape(names,urls):
         # 会社名をリスト型で表示
        print(urls)
         # リンクをリスト型で表示
+       print("取得会社数    "  + str(len(names)))
+       print("取得リンク数  " + str(len(urls)))    
         
-    return(names,urls)
+    # return [urls]
 
 # namesとurlsという空のリストを作成し、scrape関数に渡し、返り値を受け取る
 def main():
@@ -69,12 +73,15 @@ def main():
         # 会社名のリスト
     urls =[]
         # 詳細へのリンクのリスト
+        
 
-    scrape(names,urls)
+    # scrape(names,urls)
+    scrape(urls,names)
         # ２つの空リストをscrape関数に渡す
 
-    print(type(names))    #namesとurlsのタイプを確認
-    print(type(urls))    
+    # print(type(names))    #namesとurlsのタイプを確認
+    print(type(urls))
+    print(type(names))    
     
     print(names)
         # 会社名をリスト型で表示
