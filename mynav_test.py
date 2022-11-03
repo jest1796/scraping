@@ -40,6 +40,8 @@ def scrape(urls,names):
     for co_link in co_links:
         page_urls.append(co_link.get_attribute)
         # print(co_link.get_attribute('href') + "\n")
+        detail_link = driver.find_element(By.XPATH,'//a[@class="js__ga--setCookieOccName"]')
+        driver.execute_script('arguments[0].click();', detail_link)
     urls += page_urls
     sleep(3)
 
