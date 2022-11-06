@@ -25,10 +25,11 @@ def scrape(urls,names):
     pag.click(200,200)
     sleep(2)
     pag.click(200,200)
-
-
-    co_names = driver.find_elements(By.XPATH,'//h3')
-    co_links = driver.find_elements(By.XPATH,'//a[@class="js__ga--setCookieOccName"]')
+    
+    print(str(id(urls)) + "  scrape関数の一番上の時" )
+    co_names = driver.find_elements(By.XPATH,'//h3[contains(@class,"cassetteRecruit")]')                                    #１ページ内のすべての社名
+    # co_links = driver.find_elements(By.XPATH,'//a[@class="js__ga--setCookieOccName"]')  
+    detail_links = driver.find_elements(By.XPATH,'//a[contains(text(),"詳細を見る")]')
 
     page_names = []
     for co_name in co_names:
@@ -37,12 +38,18 @@ def scrape(urls,names):
     names += page_names    
     
     page_urls = []
-    for co_link in co_links:
-        page_urls.append(co_link.get_attribute)
+    for detail_link in detail_links:
+        page_urls.append(detail_link.get_attribute('href'))
         # print(co_link.get_attribute('href') + "\n")
-        detail_link = driver.find_element(By.XPATH,'//a[@class="js__ga--setCookieOccName"]')
-        driver.execute_script('arguments[0].click();', detail_link)
-    urls += page_urls
+    
+        # driver.execute_script('arguments[0].click();', detail_link)
+        # payment = driver.find_element(By.XPATH,'h1')
+        # sleep(3)
+        # driver.quit()
+        # driver.execute_script('arguments[0].click();', detail_link)
+    urls = urls + page_urls
+    print(str(id(urls)) + "  ページ内のリンク取得後")
+    # urls += page_urls;
     sleep(3)
 
 
@@ -50,24 +57,24 @@ def scrape(urls,names):
     try:
         next_link = driver.find_element(By.XPATH,'(//li/a[@class ="iconFont--arrowLeft"])[2]')
         driver.execute_script('arguments[0].click();', next_link)
-        print('次のページをスクレイピング開始')
+        # print('次のページをスクレイピング開始')
         
         sleep(2)
         # scrape(names,urls)
         scrape(urls,names)
     except:
         #namesとurlsのタイプを確認
-       print(type(names))
-       print(type(urls))
+    #    print(type(names))
+    #    print(type(urls))
 
-       print(names)
+    #    print(names)
         # 会社名をリスト型で表示
-       print(urls)
+    #    print(urls)
         # リンクをリスト型で表示
        print("取得会社数    "  + str(len(names)))
-       print("取得リンク数  " + str(len(urls)))    
+       print("取得リンク数  " + str(len(urls)))
+       print(str(id(urls)) + "  戻す直前")    
         
-    # return [urls]
 
 # namesとurlsという空のリストを作成し、scrape関数に渡し、返り値を受け取る
 def main():
@@ -75,6 +82,7 @@ def main():
         # 会社名のリスト
     urls =[]
         # 詳細へのリンクのリスト
+    print(str(id(urls)) + "  最初")    
         
 
     # scrape(names,urls)
@@ -82,14 +90,13 @@ def main():
         # ２つの空リストをscrape関数に渡す
 
     # print(type(names))    #namesとurlsのタイプを確認
-    print(type(urls))
-    print(type(names))    
+    # print(type(urls))
     
-    print(names)
+    # print(names)
         # 会社名をリスト型で表示
-    print(urls)
+    # print(urls)
         # リンクをリスト型で表示
-
+    print(str(id(urls)) + "  最後" )
 
     print("取得会社数    "  + str(len(names)))
     print("取得リンク数  " + str(len(urls)))    
@@ -128,9 +135,14 @@ driver.quit()
 
 # //a[@class="link entry_click entry3"]　詳細へのリンク
 # //a[@class="js__ga--setCookieOccName"] 詳細へのリンクこちらかも？
+# //a[contains(text(),"詳細を見る")]
 
 # //a[@class="iconFont--arrowLeft"] 次のページへのリンク
 # //li[@class="pager__next"]/a
+
+
+# //div[contains(text(),"月給") or contains(text(),"年俸")] /text()　「給与」欄のテキスト取得　brで区切られているので複数指定の必要あり。
+# 「みなし残業」「固定残業」の文字を上記のXpathで探し、あればフラグをチェック、無かったら次に行く（try except文）方がスムーズかも。
 
 # print("\n" + "スクレイピングを実行しますか？　（Y / N)")
 # Y_N = input()
