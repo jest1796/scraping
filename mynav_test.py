@@ -81,24 +81,24 @@ def scrape(urls,names):
     try:
         next_link = driver.find_element(By.XPATH,'(//li/a[@class ="iconFont--arrowLeft"])[2]')
         driver.execute_script('arguments[0].click();', next_link)
-        print('次のページをスクレイピング開始')
+        # print('次のページをスクレイピング開始')
         
         sleep(2)
         # scrape(names,urls)
         scrape(urls,names)
     except:
         #namesとurlsのタイプを確認
-       print(type(names))
-       print(type(urls))
+    #    print(type(names))
+    #    print(type(urls))
 
-       print(names)
+    #    print(names)
         # 会社名をリスト型で表示
-       print(urls)
+    #    print(urls)
         # リンクをリスト型で表示
        print("取得会社数    "  + str(len(names)))
-       print("取得リンク数  " + str(len(urls)))    
+       print("取得リンク数  " + str(len(urls)))
+       print(str(id(urls)) + "  戻す直前")    
         
-    # return [urls]
 
 # namesとurlsという空のリストを作成し、scrape関数に渡し、返り値を受け取る
 def main():
@@ -106,6 +106,7 @@ def main():
         # 会社名のリスト
     urls =[]
         # 詳細へのリンクのリスト
+    print(str(id(urls)) + "  最初")    
         
 
     # scrape(names,urls)
@@ -113,14 +114,13 @@ def main():
         # ２つの空リストをscrape関数に渡す
 
     # print(type(names))    #namesとurlsのタイプを確認
-    print(type(urls))
-    print(type(names))    
+    # print(type(urls))
     
-    print(names)
+    # print(names)
         # 会社名をリスト型で表示
-    print(urls)
+    # print(urls)
         # リンクをリスト型で表示
-
+    print(str(id(urls)) + "  最後" )
 
     print("取得会社数    "  + str(len(names)))
     print("取得リンク数  " + str(len(urls)))    
@@ -150,3 +150,23 @@ main()
 sleep(5)
 driver.quit()
 
+# //input[@class="topSearch__text"] 検索窓のXpath 
+
+# (//p[@class="result__num"]/em)[1]/text() 検索する求人票の数
+
+# //p[@class="main_title"] 会社名
+# //h3[@class="cassetteRecruit__name"] 会社名こちらかも？
+
+# //a[@class="link entry_click entry3"]　詳細へのリンク
+# //a[@class="js__ga--setCookieOccName"] 詳細へのリンクこちらかも？
+
+# //a[@class="iconFont--arrowLeft"] 次のページへのリンク
+# //li[@class="pager__next"]/a
+
+# print("\n" + "スクレイピングを実行しますか？　（Y / N)")
+# Y_N = input()
+# if Y_N=="y":
+#     print("スクレイピング実行\n"+"UNDER CONSTRUCTION")
+#     main()
+# else:
+#     print("中止します。")
