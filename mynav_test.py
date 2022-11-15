@@ -58,10 +58,18 @@ def scrape(urls,names):
 
         sleep(5)
         try:
+            info_page_link = driver.find_element(By.XPATH,'//li[@class="tabNaviRecruit__item blue" and contains(.,"求人情報")]/a')
+            print("メッセージページです")
+            driver.execute_script('arguments[0].click();',info_page_link)
+            print("求人情報ページへ移動します")
+        except:
+            print("求人情報ページのためこのまま続行")
+
+        try:
             work_late = driver.find_element(By.XPATH,'//div[contains(.,"固定残業") or contains(.,"みなし残業") or contains(.,"見込み残業")]')
-            print(work_late.text)
+            # print(work_late.text)
             conpany_name = driver.find_element(By.XPATH,'//span[@class="companyName"]')
-            print(conpany_name.text + "　注意　　")
+            print(conpany_name.text + "　残業条件注意　　")
         except:
             print("なし")
       
@@ -162,11 +170,3 @@ driver.quit()
 
 # //a[@class="iconFont--arrowLeft"] 次のページへのリンク
 # //li[@class="pager__next"]/a
-
-# print("\n" + "スクレイピングを実行しますか？　（Y / N)")
-# Y_N = input()
-# if Y_N=="y":
-#     print("スクレイピング実行\n"+"UNDER CONSTRUCTION")
-#     main()
-# else:
-#     print("中止します。")
