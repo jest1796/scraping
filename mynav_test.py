@@ -10,14 +10,17 @@ from time import sleep
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import pyautogui as pag
+import pandas as pd
 
 driver = webdriver.Chrome()
 driver.implicitly_wait(10)
 driver.get('https://tenshoku.mynavi.jp/')
 
 
-def scrape(urls,names):
+  
 
+def scrape(urls,names,df):
+    
     # 検索後のページでもアンケート用小ウインドウが１つまたは２つ開く場合があるので
     # ２秒待機後にクリックを２回行ってそれらを消す
     sleep(2)
@@ -66,17 +69,23 @@ def scrape(urls,names):
             print("求人情報ページのためこのまま続行")
 
         try:
+            #求人情報ページ内に「固定残業」「みなし残業」「見込み残業」の文字列どれかがあれば 変数work_lateに格納。なければ獲得失敗となりexcept以降の処理へ飛ぶ
             work_late = driver.find_element(By.XPATH,'//div[contains(.,"固定残業") or contains(.,"みなし残業") or contains(.,"見込み残業")]')
-            # print(work_late.text)
-            conpany_name = driver.find_element(By.XPATH,'//span[@class="companyName"]')
-            print(conpany_name.text + "　残業条件注意　　")
+            conpany_name = driver.find_element(By.XPATH,'//span[@class="companyName"]').text
+            print(conpany_name+ "　残業条件注意　　")
+            overtime = "有り"    #固定残業等
         except:
-            print("なし")
+            overtime = "なし"
+            print(overtime)
       
         # 上記のtry except文で要素が取得できなかった場合でも会社詳細を検索出来ているかをチェックするため社名を表示
-        conpany_name = driver.find_element(By.XPATH,'//span[@class="companyName"]')
-        print(conpany_name.text)
+        company_name = driver.find_element(By.XPATH,'//span[@class="companyName"]').text
+        print(company_name)
 
+        company_data = pd.Series([company_name,overtime,co_link],index=df.columns)
+        print(company_data)
+        df = df.append(company_data,ignore_index=True)
+      
         # 検索結果一覧のページに戻るためにhandle_array[0]を指定
         driver.switch_to.window(handle_array[0])
 
@@ -89,23 +98,19 @@ def scrape(urls,names):
     try:
         next_link = driver.find_element(By.XPATH,'(//li/a[@class ="iconFont--arrowLeft"])[2]')
         driver.execute_script('arguments[0].click();', next_link)
-        # print('次のページをスクレイピング開始')
+        print('次のページをスクレイピング開始')
         
         sleep(2)
-        # scrape(names,urls)
-        scrape(urls,names)
+    
+        scrape(urls,names,df)
     except:
-        #namesとurlsのタイプを確認
-    #    print(type(names))
-    #    print(type(urls))
-
-    #    print(names)
-        # 会社名をリスト型で表示
-    #    print(urls)
-        # リンクをリスト型で表示
+       
        print("取得会社数    "  + str(len(names)))
        print("取得リンク数  " + str(len(urls)))
-       print(str(id(urls)) + "  戻す直前")    
+       print(str(id(urls)) + "  戻す直前")
+       print(df)
+       print(id(df)) 
+       return(df)    
         
 
 # namesとurlsという空のリストを作成し、scrape関数に渡し、返り値を受け取る
@@ -114,11 +119,13 @@ def main():
         # 会社名のリスト
     urls =[]
         # 詳細へのリンクのリスト
+    df = pd.DataFrame(columns=['会社名','みなし残業等','URL'],index=[0])  
+
     print(str(id(urls)) + "  最初")    
         
 
     # scrape(names,urls)
-    scrape(urls,names)
+    scrape(urls,names,df)
         # ２つの空リストをscrape関数に渡す
 
     # print(type(names))    #namesとurlsのタイプを確認
@@ -133,7 +140,9 @@ def main():
     print("取得会社数    "  + str(len(names)))
     print("取得リンク数  " + str(len(urls)))    
             # 最終的に取得できた会社数とリンク数を表示
-    return()
+    print(df)
+    print(id(df))        
+    return(df)
 
 
 search_bar = driver.find_element(By.XPATH,'//input[@class="topSearch__text"]')
