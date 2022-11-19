@@ -108,7 +108,8 @@ def scrape(urls,names,df):
        print("取得会社数    "  + str(len(names)))
        print("取得リンク数  " + str(len(urls)))
        print(str(id(urls)) + "  戻す直前")
-       print(df)
+    #    print(df.drop[0])
+       df.to_csv("Result.csv")
        print(id(df)) 
        return(df)    
         
