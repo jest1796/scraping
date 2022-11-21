@@ -50,7 +50,9 @@ def scrape(urls,names,df):
 
     for co_link in co_links:
         page_urls.append(co_link.get_attribute)
-        print(co_link.get_attribute('href') + "\n")
+        link = co_link.get_attribute('href')
+        print(link)
+        # print(co_link.get_attribute('href') + "\n")
         driver.execute_script('arguments[0].click();', co_link)
 
         # 会社詳細を開くたびに新たなタブが開くので、変数handle_arrayにタブ操作のためのドライバを入れる
@@ -70,6 +72,7 @@ def scrape(urls,names,df):
 
         try:
             #求人情報ページ内に「固定残業」「みなし残業」「見込み残業」の文字列どれかがあれば 変数work_lateに格納。なければ獲得失敗となりexcept以降の処理へ飛ぶ
+            
             work_late = driver.find_element(By.XPATH,'//div[contains(.,"固定残業") or contains(.,"みなし残業") or contains(.,"見込み残業")]')
             conpany_name = driver.find_element(By.XPATH,'//span[@class="companyName"]').text
             print(conpany_name+ "　残業条件注意　　")
@@ -81,8 +84,8 @@ def scrape(urls,names,df):
         # 上記のtry except文で要素が取得できなかった場合でも会社詳細を検索出来ているかをチェックするため社名を表示
         company_name = driver.find_element(By.XPATH,'//span[@class="companyName"]').text
         print(company_name)
-
-        company_data = pd.Series([company_name,overtime,co_link],index=df.columns)
+        # link = co_link.get_attribute('href') #会社求人情報ページへのURL
+        company_data = pd.Series([company_name,overtime,link],index=df.columns)
         print(company_data)
         df = df.append(company_data,ignore_index=True)
       
