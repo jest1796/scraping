@@ -11,6 +11,12 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import pyautogui as pag
 import pandas as pd
+import datetime
+
+print("検索したい単語をスペース区切りで入力してください\n")
+print("(市町村名、職種、未経験など\n>>")
+words = input()
+
 
 driver = webdriver.Chrome()
 driver.implicitly_wait(10)
@@ -58,7 +64,6 @@ def scrape(urls,names,df):
         # 会社詳細を開くたびに新たなタブが開くので、変数handle_arrayにタブ操作のためのドライバを入れる
         handle_array = driver.window_handles
 
-        # 一番最後に開いたタブ（取得したい会社の詳細ページ）を指定するため、handle_arrayの[-1]を指定
         driver.switch_to.window(handle_array[-1])
 
         sleep(5)
@@ -112,8 +117,9 @@ def scrape(urls,names,df):
        print("取得リンク数  " + str(len(urls)))
        print(str(id(urls)) + "  戻す直前")
     #    print(df.drop[0])
+       today = datetime.date.today 
        df.to_csv("Result.csv")
-       print(id(df)) 
+       
        return(df)    
         
 
@@ -128,29 +134,18 @@ def main():
     print(str(id(urls)) + "  最初")    
         
 
-    # scrape(names,urls)
     scrape(urls,names,df)
-        # ２つの空リストをscrape関数に渡す
-
-    # print(type(names))    #namesとurlsのタイプを確認
-    # print(type(urls))
-    
-    # print(names)
-        # 会社名をリスト型で表示
-    # print(urls)
-        # リンクをリスト型で表示
-    print(str(id(urls)) + "  最後" )
+        # 2つの空リストとデータフレーム1つをscrape関数に渡す
 
     print("取得会社数    "  + str(len(names)))
     print("取得リンク数  " + str(len(urls)))    
             # 最終的に取得できた会社数とリンク数を表示
-    print(df)
-    print(id(df))        
+    
     return(df)
 
 
 search_bar = driver.find_element(By.XPATH,'//input[@class="topSearch__text"]')
-search_bar.send_keys("大阪市　ITエンジニア　未経験")
+search_bar.send_keys(words)
 
 # ポップアップ画面二つ（アンケートや事前確認）が確実に現れてから次の処理に移るために2秒待機
 sleep(3)
@@ -171,15 +166,4 @@ main()
 sleep(5)
 driver.quit()
 
-# //input[@class="topSearch__text"] 検索窓のXpath 
 
-# (//p[@class="result__num"]/em)[1]/text() 検索する求人票の数
-
-# //p[@class="main_title"] 会社名
-# //h3[@class="cassetteRecruit__name"] 会社名こちらかも？
-
-# //a[@class="link entry_click entry3"]　詳細へのリンク
-# //a[@class="js__ga--setCookieOccName"] 詳細へのリンクこちらかも？
-
-# //a[@class="iconFont--arrowLeft"] 次のページへのリンク
-# //li[@class="pager__next"]/a
