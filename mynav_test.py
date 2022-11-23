@@ -14,7 +14,7 @@ import pandas as pd
 import datetime
 
 print("検索したい単語をスペース区切りで入力してください\n")
-print("(市町村名、職種、未経験など\n>>")
+print("(市町村名、職種、未経験など））\n>>")
 words = input()
 
 
@@ -115,10 +115,11 @@ def scrape(urls,names,df):
        
        print("取得会社数    "  + str(len(names)))
        print("取得リンク数  " + str(len(urls)))
-       print(str(id(urls)) + "  戻す直前")
+       
     #    print(df.drop[0])
-       today = datetime.date.today 
-       df.to_csv("Result.csv")
+       dt = datetime.datetime.now()
+       dt = dt.strftime('%Y-%m-%d_%H%M%S')
+       df.to_csv(dt + "_data.csv")
        
        return(df)    
         
