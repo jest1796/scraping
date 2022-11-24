@@ -119,7 +119,8 @@ def scrape(urls,names,df):
     #    print(df.drop[0])
        dt = datetime.datetime.now()
        dt = dt.strftime('%Y-%m-%d_%H%M%S')
-       df.to_csv(dt + "_data.csv")
+       df = df.dropna()
+       df.to_csv(dt + "_data.csv",index=False)
        
        return(df)    
         
