@@ -17,8 +17,10 @@ print("検索したい単語をスペース区切りで入力してください\
 print("(市町村名、職種、未経験など））\n")
 words = input()
 
+options = Options()
+options.add_argument('--headless')
 
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(options = options)
 driver.implicitly_wait(10)
 driver.get('https://tenshoku.mynavi.jp/')
 
