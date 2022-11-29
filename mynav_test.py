@@ -14,7 +14,7 @@ import pandas as pd
 import datetime
 
 print("検索したい単語をスペース区切りで入力してください\n")
-print("(市町村名、職種、未経験など））\n>>")
+print("(市町村名、職種、未経験など））\n")
 words = input()
 
 
@@ -149,7 +149,7 @@ def main():
 search_bar = driver.find_element(By.XPATH,'//input[@class="topSearch__text"]')
 search_bar.send_keys(words)
 
-# ポップアップ画面二つ（アンケートや事前確認）が確実に現れてから次の処理に移るために2秒待機
+# ポップアップ画面二つ（アンケートや事前確認）が確実に現れてから次の処理に移るために3秒待機
 sleep(3)
 
 # ポップアップ画面を消して「検索ボタン」を押すために、画面上の適当な点を２回クリックする
@@ -163,9 +163,13 @@ sleep(2)
 
 number_recrute = driver.find_element(By.XPATH,('//p[@class="result__num"]/em')).text
 print("\n" + "検索数は"+ number_recrute +"です。")
-main()
+print("実行しますか？（検索数に比例して時間がかかります）")
+print("スクレイピング開始＞＞1を押してください\n中止　　　　　　　＞＞2を押してください")
+a = int(input())
+if a==1:
+    print("GO!")
+    main()
 
-sleep(5)
 driver.quit()
 
 
