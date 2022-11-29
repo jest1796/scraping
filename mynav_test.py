@@ -31,10 +31,10 @@ def scrape(urls,names,df):
     
     # 検索後のページでもアンケート用小ウインドウが１つまたは２つ開く場合があるので
     # ２秒待機後にクリックを２回行ってそれらを消す
-    sleep(2)
-    pag.click(200,200)
-    sleep(2)
-    pag.click(200,200)
+    # sleep(2)
+    # pag.click(200,200)
+    # sleep(2)
+    # pag.click(200,200)
 
     # １ページ内の会社名をまとめて取得。
     co_names = driver.find_elements(By.XPATH,'//h3[contains(@class,"cassetteRecruit")]')
@@ -155,8 +155,8 @@ search_bar.send_keys(words)
 sleep(3)
 
 # ポップアップ画面を消して「検索ボタン」を押すために、画面上の適当な点を２回クリックする
-pag.click(200,200)
-pag.click(200,200)
+# pag.click(200,200)
+# pag.click(200,200)
 
 search_btn = driver.find_element(By.XPATH,'//button[@class="topSearch__button js__searchRecruitTop"]')
 search_btn.click()
