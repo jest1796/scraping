@@ -8,7 +8,6 @@ from selenium import webdriver
 from time import sleep
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-import pyautogui as pag
 import pandas as pd
 import datetime
 
@@ -29,21 +28,21 @@ driver.get('https://tenshoku.mynavi.jp/')
 def scrape(urls,names,df):
     
     # １ページ内の会社名をまとめて取得。
-    co_names = driver.find_elements(By.XPATH,'//h3[contains(@class,"cassetteRecruit")]')
+    # co_names = driver.find_elements(By.XPATH,'//h3[contains(@class,"cassetteRecruit")]')
 
     # 1ページ内の会社詳細へのリンクをまとめて取得
     co_links = driver.find_elements(By.XPATH,'//a[@class="js__ga--setCookieOccName"]')
 
 
     # １ページ内の会社名を収納するための空リストを準備
-    page_names = []
+    # page_names = []
 
-    for co_name in co_names:
-        page_names.append(co_name.text)
-        print(co_name.text + "\n")       #取得できたかの確認のため表示
+    # for co_name in co_names:
+        # page_names.append(co_name.text)
+        # print(co_name.text + "\n")       #取得できたかの確認のため表示
         
     # 既にリスト形式で取得した会社名 names に 新たなページで取得した page_names を加える
-    names += page_names    
+    # names += page_names    
 
     # １ページ内の会社詳細へのリンクを収納するための空リストを準備
     page_urls = []
@@ -85,11 +84,9 @@ def scrape(urls,names,df):
         company_name = driver.find_element(By.XPATH,'//span[@class="companyName"]').text
         print(company_name)
         
-        # company_data = pd.Series([company_name,overtime,link],index=df.columns)
-        company_data ={'会社名':[company_name],
-                       'みなし残業等':[overtime],
-                       'URL':[link]} 
-        company_data = pd.DataFrame(company_data)
+        company_data = pd.DataFrame({'会社名':[company_name],
+                                     'みなし残業等':[overtime],
+                                     'URL':[link]})
        
         # df = df.append(company_data,ignore_index=True)
         df = pd.concat([df,company_data], axis=0, ignore_index=True)
@@ -136,8 +133,7 @@ def main():
     scrape(urls,names,df)
         # 2つの空リストとデータフレーム1つをscrape関数に渡す
 
-    print("取得会社数    "  + str(len(names)))
-    print("取得リンク数  " + str(len(urls)))    
+    print("取得求人ページ数  " + str(len(urls)))    
             # 最終的に取得できた会社数とリンク数を表示
     
     return(df)
