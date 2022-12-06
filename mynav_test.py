@@ -1,6 +1,5 @@
 # 要インストール
 #  selenium
-#  pyautogui
 
 # googlechromeのバージョンに対応したwebdriverをダウンロードの上、当ファイルと同じディレクトリに置くこと
 
@@ -29,13 +28,6 @@ driver.get('https://tenshoku.mynavi.jp/')
 
 def scrape(urls,names,df):
     
-    # 検索後のページでもアンケート用小ウインドウが１つまたは２つ開く場合があるので
-    # ２秒待機後にクリックを２回行ってそれらを消す
-    # sleep(2)
-    # pag.click(200,200)
-    # sleep(2)
-    # pag.click(200,200)
-
     # １ページ内の会社名をまとめて取得。
     co_names = driver.find_elements(By.XPATH,'//h3[contains(@class,"cassetteRecruit")]')
 
@@ -58,14 +50,15 @@ def scrape(urls,names,df):
 
     for co_link in co_links:
         page_urls.append(co_link.get_attribute)
+
+        #求人情報ページへのURL
         link = co_link.get_attribute('href')
-        print(link)
-        # print(co_link.get_attribute('href') + "\n")
+        
+        # seleniumのclickメソッドでうまく反応しなかったのでjavascript機能を使用
         driver.execute_script('arguments[0].click();', co_link)
 
         # 会社詳細を開くたびに新たなタブが開くので、変数handle_arrayにタブ操作のためのドライバを入れる
         handle_array = driver.window_handles
-
         driver.switch_to.window(handle_array[-1])
 
         sleep(5)
@@ -91,11 +84,16 @@ def scrape(urls,names,df):
         # 上記のtry except文で要素が取得できなかった場合でも会社詳細を検索出来ているかをチェックするため社名を表示
         company_name = driver.find_element(By.XPATH,'//span[@class="companyName"]').text
         print(company_name)
-        # link = co_link.get_attribute('href') #会社求人情報ページへのURL
-        company_data = pd.Series([company_name,overtime,link],index=df.columns)
-        print(company_data)
-        df = df.append(company_data,ignore_index=True)
-      
+        
+        # company_data = pd.Series([company_name,overtime,link],index=df.columns)
+        company_data ={'会社名':[company_name],
+                       'みなし残業等':[overtime],
+                       'URL':[link]} 
+        company_data = pd.DataFrame(company_data)
+       
+        # df = df.append(company_data,ignore_index=True)
+        df = pd.concat([df,company_data], axis=0, ignore_index=True)
+    
         # 検索結果一覧のページに戻るためにhandle_array[0]を指定
         driver.switch_to.window(handle_array[0])
 
@@ -113,15 +111,14 @@ def scrape(urls,names,df):
         sleep(2)
     
         scrape(urls,names,df)
+
     except:
-       
-       print("取得会社数    "  + str(len(names)))
-       print("取得リンク数  " + str(len(urls)))
-       
-    #    print(df.drop[0])
        dt = datetime.datetime.now()
        dt = dt.strftime('%Y-%m-%d_%H%M%S')
+
+    #    NANが入っている余分な最初の行を消す
        df = df.dropna()
+
        df.to_csv(dt + "_data.csv",index=False)
        
        return(df)    
@@ -133,11 +130,9 @@ def main():
         # 会社名のリスト
     urls =[]
         # 詳細へのリンクのリスト
+    
     df = pd.DataFrame(columns=['会社名','みなし残業等','URL'],index=[0])  
-
-    print(str(id(urls)) + "  最初")    
-        
-
+       
     scrape(urls,names,df)
         # 2つの空リストとデータフレーム1つをscrape関数に渡す
 
@@ -151,12 +146,7 @@ def main():
 search_bar = driver.find_element(By.XPATH,'//input[@class="topSearch__text"]')
 search_bar.send_keys(words)
 
-# ポップアップ画面二つ（アンケートや事前確認）が確実に現れてから次の処理に移るために3秒待機
 sleep(3)
-
-# ポップアップ画面を消して「検索ボタン」を押すために、画面上の適当な点を２回クリックする
-# pag.click(200,200)
-# pag.click(200,200)
 
 search_btn = driver.find_element(By.XPATH,'//button[@class="topSearch__button js__searchRecruitTop"]')
 search_btn.click()
@@ -169,7 +159,7 @@ print("実行しますか？（検索数に比例して時間がかかります�
 print("スクレイピング開始＞＞1を押してください\n中止　　　　　　　＞＞2を押してください")
 a = int(input())
 if a==1:
-    print("GO!")
+    print("実行開始")
     main()
 
 driver.quit()
