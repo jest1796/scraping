@@ -25,7 +25,7 @@ driver.get('https://tenshoku.mynavi.jp/')
 
   
 
-def scrape(urls,names,df):
+def scrape(urls,df,words):
     
     # １ページ内の会社名をまとめて取得。
     # co_names = driver.find_elements(By.XPATH,'//h3[contains(@class,"cassetteRecruit")]')
@@ -107,22 +107,22 @@ def scrape(urls,names,df):
         
         sleep(2)
     
-        scrape(urls,names,df)
+        scrape(df)
 
     except:
        dt = datetime.datetime.now()
-       dt = dt.strftime('%Y-%m-%d_%H%M%S')
+       dt = dt.strftime('%Y-%m-%d_%H%M')
 
     #    NANが入っている余分な最初の行を消す
        df = df.dropna()
 
-       df.to_csv(dt + "_data.csv",index=False)
+       df.to_csv(dt + words +"_.csv",index=False)
        
        return(df)    
         
 
 # namesとurlsという空のリストを作成し、scrape関数に渡し、返り値を受け取る
-def main():
+def main(words):
     names =[]
         # 会社名のリスト
     urls =[]
@@ -130,7 +130,7 @@ def main():
     
     df = pd.DataFrame(columns=['会社名','みなし残業等','URL'],index=[0])  
        
-    scrape(urls,names,df)
+    scrape(urls,df,words)
         # 2つの空リストとデータフレーム1つをscrape関数に渡す
 
     print("取得求人ページ数  " + str(len(urls)))    
@@ -156,7 +156,7 @@ print("スクレイピング開始＞＞1を押してください\n中止　　�
 a = int(input())
 if a==1:
     print("実行開始")
-    main()
+    main(words)
 
 driver.quit()
 
